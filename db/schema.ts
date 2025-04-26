@@ -13,13 +13,17 @@
         'pending', 'confirmed', 'cancelled', 'completed', 'no_show', 'refunded', 'deleted'
     ]);
 
+    export const entityTypeEnum = pgEnum('entity_type', [
+        'studio', 'class', 'instructor', 'user'
+      ]);
+
     const createdAtTimestamp = timestamp("created_at", {withTimezone: true}).defaultNow().notNull();
     const updatedAtTimestamp = timestamp("updated_at", {withTimezone: true});
     const deletedAtTimestamp = timestamp("deleted_at", {withTimezone: true});
 
     // Permission and Role related tables
     export const permissions = pgTable("permission", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         name: text("name").notNull().unique(),
         description: text("description"),
         category: text("category").notNull(), // e.g., 'user', 'studio', 'class', 'booking'
@@ -30,7 +34,7 @@
     });
     
     export const roles = pgTable("role", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         name: text("name").notNull().unique(),
         description: text("description"),
         isSystem: boolean("is_system").default(false), // To mark default system roles
@@ -40,7 +44,7 @@
     });
     
     export const rolePermissions = pgTable("role_permission", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         roleId: text("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
         permissionId: text("permission_id").notNull().references(() => permissions.id, { onDelete: "cascade" }),
         createdAt: createdAtTimestamp,
@@ -51,7 +55,7 @@
     ]));
     
     export const userRoles = pgTable("user_role", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
         roleId: text("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
         createdAt: createdAtTimestamp,
@@ -62,7 +66,7 @@
     ]));
 
     export const users = pgTable("user", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         name: text("name"),
         email: text("email").unique(),
         emailVerified: timestamp("emailVerified", { mode: "date" }),
@@ -147,7 +151,7 @@
 
     // Dance Studio related tables
     export const studios = pgTable("studio", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         ownerId: text("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
         name: text("name").notNull(),
         handle: text("handle").notNull().unique(),
@@ -167,7 +171,7 @@
     });
   
     export const rooms = pgTable("room", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         studioId: text("studio_id").notNull().references(() => studios.id, { onDelete: "cascade" }),
         name: text("name").notNull(),
         description: text("description"),
@@ -179,7 +183,7 @@
     });
   
     export const instructorProfiles = pgTable("instructor_profile", {
-        id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+        id: text("id").primaryKey(),
         userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
         bio: text("bio"),
         specialties: text("specialties"),
@@ -192,7 +196,7 @@
     });
   
   export const studioInstructors = pgTable("studio_instructor", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    id: text("id").primaryKey(),
     studioId: text("studio_id").notNull().references(() => studios.id, { onDelete: "cascade" }),
     instructorProfileId: text("instructor_profile_id").notNull().references(() => instructorProfiles.id, { onDelete: "cascade" }),
     status: text("status").notNull().default("active"), // active, inactive, suspended
@@ -205,7 +209,7 @@
   });
   
   export const classes = pgTable("class", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    id: text("id").primaryKey(),
     studioId: text("studio_id").notNull().references(() => studios.id, { onDelete: "cascade" }),
     roomId: text("room_id").notNull().references(() => rooms.id, { onDelete: "cascade" }),
     primaryInstructorId: text("primary_instructor_id").notNull().references(() => studioInstructors.id, { onDelete: "cascade" }),
@@ -226,8 +230,8 @@
     deletedAt: deletedAtTimestamp,
   });
   
-  export const classAssistants = pgTable("class_assistant", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  export const classInstructors = pgTable("class_instructors", {
+    id: text("id").primaryKey(),
     classId: text("class_id").notNull().references(() => classes.id, { onDelete: "cascade" }),
     assistantInstructorId: text("assistant_instructor_id").notNull().references(() => studioInstructors.id, { onDelete: "cascade" }),
     createdAt: createdAtTimestamp,
@@ -236,7 +240,7 @@
   });
   
   export const bookings = pgTable("booking", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     classId: text("class_id").notNull().references(() => classes.id, { onDelete: "cascade" }),
     status: bookingStatusEnum("status").default("pending"),
@@ -251,7 +255,7 @@
   
   // For handling package/subscription based bookings
   export const classPackages = pgTable("class_package", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    id: text("id").primaryKey(),
     studioId: text("studio_id").notNull().references(() => studios.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     description: text("description"),
@@ -264,7 +268,7 @@
   });
   
   export const userPackages = pgTable("user_package", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     packageId: text("package_id").notNull().references(() => classPackages.id, { onDelete: "cascade" }),
     remainingClasses: integer("remaining_classes").notNull(),
@@ -274,3 +278,29 @@
     updatedAt: updatedAtTimestamp,
     deletedAt: deletedAtTimestamp,
   });
+
+  export const images = pgTable("image", {
+    id: text("id").primaryKey(),
+    entityType: entityTypeEnum("entity_type").notNull(),
+    entityId: text("entity_id").notNull(),
+    url: text("url").notNull(),
+    key: text("key").notNull(), // storage key/path
+    filename: text("filename").notNull(),
+    contentType: text("content_type").notNull(),
+    size: integer("size").notNull(), // in bytes
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+    altText: text("alt_text"),
+    isPrimary: boolean("is_primary").default(false),
+    order: integer("order").default(0),
+    metadata: text("metadata"), // JSON string for additional info
+    createdAt: createdAtTimestamp,
+    updatedAt: updatedAtTimestamp,
+    deletedAt: deletedAtTimestamp,
+  }, (table) => ([
+    // Ensure only one primary image per entity
+    primaryKey({ 
+      columns: [table.entityType, table.entityId, table.isPrimary],
+      name: "unique_primary_image_per_entity"
+    }),
+  ]));
