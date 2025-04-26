@@ -44,7 +44,6 @@
     });
     
     export const rolePermissions = pgTable("role_permission", {
-        id: text("id").primaryKey(),
         roleId: text("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
         permissionId: text("permission_id").notNull().references(() => permissions.id, { onDelete: "cascade" }),
         createdAt: createdAtTimestamp,
@@ -55,7 +54,6 @@
     ]));
     
     export const userRoles = pgTable("user_role", {
-        id: text("id").primaryKey(),
         userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
         roleId: text("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
         createdAt: createdAtTimestamp,
@@ -79,8 +77,7 @@
         deletedAt: deletedAtTimestamp,
     })
    
-    export const accounts = pgTable(
-      "account",{
+    export const accounts = pgTable( "account",{
         userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
         type: text("type").$type<AdapterAccountType>().notNull(),
         provider: text("provider").notNull(),
@@ -110,8 +107,7 @@
       expires: timestamp("expires", { mode: "date" }).notNull(),
     })
     
-    export const verificationTokens = pgTable(
-      "verificationToken",
+    export const verificationTokens = pgTable("verificationToken",
       {
         identifier: text("identifier").notNull(),
         token: text("token").notNull(),
@@ -126,8 +122,7 @@
       ]
     )
     
-    export const authenticators = pgTable(
-      "authenticator",
+    export const authenticators = pgTable("authenticator",
       {
         credentialID: text("credentialID").notNull().unique(),
         userId: text("userId")
@@ -279,7 +274,7 @@
     deletedAt: deletedAtTimestamp,
   });
 
-  export const images = pgTable("image", {
+  export const mediaFiles = pgTable("media_files", {
     id: text("id").primaryKey(),
     entityType: entityTypeEnum("entity_type").notNull(),
     entityId: text("entity_id").notNull(),
@@ -297,10 +292,4 @@
     createdAt: createdAtTimestamp,
     updatedAt: updatedAtTimestamp,
     deletedAt: deletedAtTimestamp,
-  }, (table) => ([
-    // Ensure only one primary image per entity
-    primaryKey({ 
-      columns: [table.entityType, table.entityId, table.isPrimary],
-      name: "unique_primary_image_per_entity"
-    }),
-  ]));
+  });
