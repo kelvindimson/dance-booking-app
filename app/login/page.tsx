@@ -7,6 +7,7 @@ import { GoogleSignOut } from '@/components/GoogleSignOut'
 
 const LoginPage = async () => {
   const session = await auth()
+  console.log("Session from Login Page", session)
 
   if (session) {
     // Redirect to the dashboard or home page

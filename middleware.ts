@@ -10,6 +10,7 @@ export default auth((req) => {
 export const config = {
     matcher: [
         '/admin/:path*', 
+        '/account/:path*',
         // '/studio/:path*'
     ],
   }

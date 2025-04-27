@@ -4,6 +4,6 @@ import { Button } from "./ui/button"
  
 export function GoogleSignIn() {
   return (
-    <Button onClick={() => signIn("google")} variant="outline" className="w-full"> Login with Google </Button>
+    <Button onClick={() => signIn("google")} variant="outline" size={"lg"} className="w-full py-6 hover:cursor-pointer"> Login with Google </Button>
   )
 }

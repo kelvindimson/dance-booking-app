@@ -66,8 +66,10 @@
     export const users = pgTable("user", {
         id: text("id").primaryKey(),
         name: text("name"),
-        email: text("email").unique(),
+        // username: text("username").unique(),
+        email: text("email").notNull().unique(),
         emailVerified: timestamp("emailVerified", { mode: "date" }),
+        password: text("password"),
         image: text("image"),
         status: userStatusEnum("status").default("pending"),
         phoneNumber: text("phoneNumber"),
