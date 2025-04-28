@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import NextAuth from "next-auth"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { dbConnection } from "./db"
@@ -9,19 +10,17 @@ import { signInSchema } from "./utils/zod"
 import { validateCredentials } from "./utils/authUtils"
 import { eq } from "drizzle-orm"
 import { UserStatus } from "./models/authSchema"
+import { v4 as uuid } from 'uuid'
+import { encode as defaultEncode } from "next-auth/jwt"
 
-export const { handlers, auth } = NextAuth({
-    adapter: DrizzleAdapter(dbConnection, {
-      usersTable: users,
-      accountsTable: accounts,
-      sessionsTable: sessions,
-      verificationTokensTable: verificationTokens,
-    }),
-    // session: {
-    //     strategy: "jwt",
-    //     maxAge: 30 * 24 * 60 * 60, // 30 days
-    //     updateAge: 24 * 60 * 60, // 24 hours
-    // },
+const adapter = DrizzleAdapter(dbConnection)
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+    adapter,
+    session: {
+      strategy: "database",
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
     providers: [
         Google({}),
         Credentials({
@@ -29,92 +28,51 @@ export const { handlers, auth } = NextAuth({
               email: { label: "Email", type: "email" },
               password: { label: "Password", type: "password" }
             },
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             async authorize(credentials, request) {
                 try {
-                  const { email, password } = await signInSchema.parseAsync(credentials)
-                  
-                  const result = await validateCredentials(email, password)
-
-                  const statusFromDB = await dbConnection
-                    .select()
-                    .from(users)
-                    .where(eq(users.email, email))
-                    .limit(1)
-
-                    if (statusFromDB.length === 0) {
-                        return null
+                    const { email, password } = await signInSchema.parseAsync(credentials)
+                    const result = await validateCredentials(email, password)
+                    
+                    
+                    if (!result.success || !result.user) {
+                        // Log the *specific* reason server-side for debugging
+                        console.error(`Authentication failed for ${email}: ${result.message}`);
+            
+                        // *** CHANGE HERE: Return null for expected auth failures ***
+                        return null;
+                        // throw new Error(result.message || "Authentication failed"); // <- Don't throw for expected failures
                     }
 
-                    const userStatus = statusFromDB[0].status
-                  
-                  if (!result.success || !result.user?.id || !result.user?.email) {
-                    // NextAuth expects null for failed auth
-                    return null
-                  }
-            
-                  return {
-                    id: result.user.id,
-                    email: result.user.email,
-                    name: result.user.name ?? null,
-                    image: result.user.image ?? null,
-                    // emailVerified: null,
-                    phoneNumber: null,
-                    // phoneNumberVerified: null,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    deletedAt: null,
-                    status: userStatus as UserStatus,
-                  }
+                    console.log(`Authentication successful for ${email}`);
+                    console.log("User data:", result.user);
+                    return result.user;
+              
+                //     // if (!result.user) {
+                //     //   throw new Error("User not found")
+                //     // }
+
+                //   // Proper Drizzle ORM query
+                //   const userFromDB = await dbConnection
+                //     .select()
+                //     .from(users)
+                //     .where(eq(users.email, email))
+                //     .limit(1)
+
+                //   if (!userFromDB[0]) {
+                //     throw new Error("User not found in database")
+                //   }
+
+                //   return userFromDB[0]
+
                 } catch (error) {
-                  if (error instanceof ZodError) {
-                    console.log('Validation error:', error.errors)
-                  }
-                  console.error('Auth error:', error)
-                  return null
+                    console.error("Auth error:", error)
+                    throw error
                 }
-              }
+            }
         })
     ],
-    pages: {
-        signIn: "/login",
-    },
     callbacks: {
-        // async jwt({ token, user, account, profile, session }) { 
-        //     console.log("account from JWT", account)
-        //     console.log("user from JWT", user)
-        //     console.log("token JWT", token)
-        //     console.log("profile JWT", profile)
-        //     console.log("session JWT", session)
-            
-        //     return {
-        //         ...token
-        //     }
-        // },
-
-        // async session({ session, token}) {
-
-        //     if (session) {
-        //         console.log("session from auth", session)
-        //     }
-
-        //     if (token) {
-        //         console.log("token from auth", token)
-        //     }
-
-
-        // return {
-        //     ...session,
-        //     roles: roles 
-        // }
-        //   return session
-        // }
-
-        session({ session, user }) {
-            //lets add user roles to the session lets create fake roles for for testing
-            const roles = ["admin", "user"]
-
-            // Clean up the session data
+        async session({ session, user }) {
             return {
                 ...session,
                 user: {
@@ -124,9 +82,48 @@ export const { handlers, auth } = NextAuth({
                     image: user.image,
                     status: user.status,
                 },
-                roles: roles, // or your test roles ["admin", "user"]
+                roles: ["admin", "user"]
             }
-        }
+        },
+        async jwt({ token, user, account }) {
+            if (account?.provider === "credentials") {
+              token.credentials = true
+            }
+            return token
+        },
+    },
+    jwt: {
+        encode: async function (params) {
+            if(params.token?.credentials) {
 
-      }
+                const sessionToken = uuid()
+
+                if (!params.token.sub){
+                    throw new Error("No user ID found in token")
+                }
+
+                const createSession = await adapter?.createSession?.({
+                    sessionToken,
+                    userId: params.token.sub,
+                    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+                })
+
+                if (!createSession) {
+                    throw new Error("Failed to create session")
+                }
+
+                return sessionToken
+
+            }
+
+            return defaultEncode(params)
+
+        },
+    },
+    pages: {
+        signIn: "/login",
+        error: "/login",
+    },
+    secret: process.env.AUTH_SECRET!,
+    // debug: process.env.NODE_ENV === "development",
 })

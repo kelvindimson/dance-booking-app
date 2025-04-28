@@ -39,9 +39,9 @@ declare module "next-auth" {
     status?: userStatusEnum | null
     phoneNumber: string | null
     phoneNumberVerified?: Date | null
-    createdAt: Date
-    updatedAt: Date | null
-    deletedAt: Date | null
+    createdAt?: Date
+    updatedAt?: Date | null
+    deletedAt?: Date | null
   }
 
   interface UserLite {

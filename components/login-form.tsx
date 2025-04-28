@@ -13,6 +13,7 @@ import toast from "react-hot-toast"
 import { signIn } from "next-auth/react"
 import { GoogleSignIn } from "./GoogleSignIn"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 interface LoginFormData {
   email: string
@@ -20,35 +21,69 @@ interface LoginFormData {
 }
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(signInSchema)
   })
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true)
+
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
+        // callbackUrl: "/account"  // Add this
       })
 
-      if (!result?.ok) {
-        toast.error(result?.error || "Failed to sign in")
+      console.log("Sign in result:", result) // Add this for debugging
+
+      if (!result) {
+        toast.error("An unexpected error occurred")
+        return
+      }
+
+      if (result.error) {
+        // Handle specific error messages from the server
+        toast.error(`There was an error, ${result.error}`)
+        return
+      }
+  
+      if (!result.ok) {
+        toast.error("Failed to sign in")
         return
       }
 
       toast.success("Signed in successfully!")
-      window.location.href = '/dashboard'
+      // Redirect to the callback URL or a default page
+      router.push(result.url || "/account")
+
+      // if (!result?.ok) {
+      //   // More detailed error handling
+      //   if (result?.error) {
+      //     toast.error(result.error)
+      //   } else if (result?.status === 401) {
+      //     toast.error("Invalid email or password")
+      //   } else {
+      //     toast.error("Failed to sign in")
+      //   }
+      //   return
+      // }
+
+
+      
+      // // Use more reliable navigation
+      // if (result.url) {
+      //   window.location.href = result.url
+      // } else {
+      //   window.location.href = '/account'
+      // }
     } catch (error) {
+      console.error("Login error:", error) // Add this for debugging
       toast.error("An unexpected error occurred")
-      console.error(error)
     } finally {
       setIsLoading(false)
     }

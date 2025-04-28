@@ -60,7 +60,7 @@ export function RegisterForm() {
         return
       }
 
-      window.location.href = '/dashboard'
+      window.location.href = '/account' // Redirect to account page or dashboard
     } catch (error) {
       toast.error("An error occurred during registration")
       console.error(error)
