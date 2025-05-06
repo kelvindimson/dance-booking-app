@@ -9,6 +9,8 @@ import React from "react"
 // import { DatabaseLogo } from "../../../public/DatabaseLogo"
 import { Button } from "./ui/button"
 import NavbarLogin from "./NavbarLogin"
+// import DanceFlowLogo from "../public/DanceFlowLogo"
+import Image from "next/image"
 
 export function Navigation() {
   const scrolled = useScroll(15)
@@ -41,9 +43,15 @@ export function Navigation() {
       <div className="w-full md:my-auto">
         <div className="relative flex items-center justify-between">
           <Link href={siteConfig.baseLinks.home} aria-label="Home">
-            <span className="sr-only">Company logo</span>
-            Logo
-            {/* <DatabaseLogo className="w-28 md:w-32" /> */}
+            <span className="sr-only">DanceFlow logo</span>
+            <Image
+              className="dark:invert"
+              src="dance-flow-logo.svg"
+              alt="Vercel logomark"
+              width={160}
+              height={60}
+            />
+            {/* <DanceFlowLogo className="w-28 md:w-32" /> */}
           </Link>
           <nav className="hidden md:absolute md:left-1/2 md:top-1/2 md:block md:-translate-x-1/2 md:-translate-y-1/2 md:transform">
             <div className="flex items-center gap-10 font-medium">

@@ -20,7 +20,7 @@ interface AccountLayoutProps {
 
 export function AccountLayout({ user }: AccountLayoutProps) {
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto p-6 space-y-8 mt-36">
       <div>
         <h1 className="text-3xl font-bold">Account</h1>
         <p className="text-muted-foreground">

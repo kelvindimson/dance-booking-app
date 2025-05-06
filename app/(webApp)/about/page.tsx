@@ -1,13 +1,11 @@
 import React from 'react'
 
-const StudiosPage
- = () => {
+const AboutUsPage = () => {
   return (
     <div className='mt-36'>
-      StudiosPage
-      
+        AboutUsPage
     </div>
   )
 }
 
-export default StudiosPage
+export default AboutUsPage
