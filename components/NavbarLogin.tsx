@@ -1,27 +1,20 @@
-"use client"
-import React from 'react'
-import { Button } from './ui/button'
-import { useSession } from 'next-auth/react'
-import Image from 'next/image'
+"use client";
 
-const NavbarLogin = () => {
-    const { data: session } = useSession()
-    const sessionUser = session?.user?.name
+import { useSession } from "next-auth/react";
+import { Button } from "./ui/button";
+import { UserMenu } from "./UserMenu";
+import Link from "next/link";
+
+export default function NavbarLogin() {
+  const { data: session } = useSession();
+
+  if (session) {
+    return <UserMenu />;
+  }
+
   return (
-    <Button variant="secondary" className="flex items-center gap-2 cursor-pointer">
-        {sessionUser ? (
-            <div className="flex items-center gap-2">
-                <Image src={session?.user?.image || ""} alt="User Avatar" 
-                className="w-6 h-6 rounded-full" 
-                width={24} height={24}
-                />
-                <span>{sessionUser}</span>
-            </div>
-        ) : (
-            <span>Login</span>
-        )}
+    <Button asChild>
+      <Link href="/login">Login</Link>
     </Button>
-  )
+  );
 }
-
-export default NavbarLogin
