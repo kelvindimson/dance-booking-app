@@ -22,11 +22,11 @@ declare module "next-auth" {
       status?: userStatusEnum | null
       phoneNumber?: string | null
       username?: string | null
+      roles?: string[];
     },
     sessionToken: string,
     userId: string,
     expires: Date;
-    roles?: string[];
   }
 
   export interface User {
@@ -54,4 +54,14 @@ declare module "next-auth" {
   }
 
   
+}
+
+export interface Role {
+  id: string;
+  name: string
+  description?: string | null;
+  isSystem?: boolean;
+  createdAt: Date;
+  updatedAt?: Date | null;
+  deletedAt?: Date | null;
 }
