@@ -1,11 +1,11 @@
-import React from 'react'
+"use client";
 
-const ClassesPage = () => {
+import { ClassesTable } from "@/components/classes/classes-table";
+
+export default function ClassesPage() {
   return (
-    <div>
-        page
+    <div className="p-6">
+      <ClassesTable />
     </div>
-  )
+  );
 }
-
-export default ClassesPage

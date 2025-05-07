@@ -209,7 +209,7 @@
     id: text("id").primaryKey(),
     studioId: text("studio_id").notNull().references(() => studios.id, { onDelete: "cascade" }),
     roomId: text("room_id").notNull().references(() => rooms.id, { onDelete: "cascade" }),
-    primaryInstructorId: text("primary_instructor_id").notNull().references(() => studioInstructors.id, { onDelete: "cascade" }),
+    primaryInstructorId: text("primary_instructor_id").notNull(),
     name: text("name").notNull(),
     description: text("description"),
     type: text("type").notNull(),

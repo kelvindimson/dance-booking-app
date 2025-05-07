@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/sidebar"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 
 const menuItems = [
   {
@@ -30,6 +29,11 @@ const menuItems = [
     href: "/admin/studios"
   },
   {
+    title: "Rooms",
+    icon: Home,
+    href: "/admin/rooms"    
+  },
+  {
     title: "Classes",
     icon: CalendarDays,
     href: "/admin/classes"
@@ -42,13 +46,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
   return (
     <Sidebar {...props}>
       <SidebarContent className="gap-2 px-2 py-4">
-                    <Image
-                      className="dark:invert"
-                      src="dance-flow-logo.svg"
-                      alt="Vercel logomark"
-                      width={160}
-                      height={60}
-                    />
+         <h2 className="text-lg font-semibold">Dance Flow Admin</h2>
                     <hr className="border-gray-200 dark:border-gray-700" />
         <SidebarMenu>
           {menuItems.map((item) => (

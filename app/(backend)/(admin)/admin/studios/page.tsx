@@ -1,15 +1,11 @@
-"use client"
-import { useSession } from "next-auth/react"
+"use client";
 
-const AdminStudioManagementPage = () => {
-  const { data: session } = useSession()
+import { StudiosTable } from "@/components/studios/studios-table";
 
-  console.log("session", session)
+export default function StudiosPage() {
   return (
-    <div>Admin StudioManagement Page.
-        
+    <div className="p-6">
+      <StudiosTable />
     </div>
-  )
+  );
 }
-
-export default AdminStudioManagementPage

@@ -62,9 +62,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async session({ session, user }) {
 
             const userRoles = await getUserRoles(user.id)
-            console.log("userRoles", userRoles)
-
-
 
             return {
                 ...session,

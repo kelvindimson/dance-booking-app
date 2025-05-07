@@ -92,9 +92,9 @@ export interface Room {
   description?: string | null;
   capacity: number;
   amenities?: string | null;
-  createdAt: Date;
+  studioName?: string; // Added this field
+  createdAt?: Date;
   updatedAt?: Date | null;
-  deletedAt?: Date | null;
 }
 
 export interface InstructorProfile {
