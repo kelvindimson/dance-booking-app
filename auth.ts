@@ -12,6 +12,7 @@ import { eq } from "drizzle-orm"
 import { UserStatus } from "./models/authSchema"
 import { v4 as uuid } from 'uuid'
 import { encode as defaultEncode } from "next-auth/jwt"
+import { getUserRoles } from "./utils/getUserRoles"
 
 const adapter = DrizzleAdapter(dbConnection)
 
@@ -56,7 +57,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         })
     ],
     callbacks: {
+
+
         async session({ session, user }) {
+
+            const userRoles = await getUserRoles(user.id)
+            console.log("userRoles", userRoles)
+
+
+
             return {
                 ...session,
                 user: {
@@ -65,8 +74,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     email: user.email,
                     image: user.image,
                     status: user.status,
-                },
-                roles: ["admin", "user"]
+                    roles: userRoles,
+                }
             }
         },
         async jwt({ token, user, account }) {

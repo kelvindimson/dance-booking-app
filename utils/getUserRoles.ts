@@ -12,7 +12,7 @@ export const getUserRoles = async (userId: string,
         roleId: userRoles.roleId,
     }).from(userRoles).where(eq(userRoles.userId, userId))
 
-    if (rolesIdFromDB.length === 0) return [];
+    if (rolesIdFromDB.length === 0) return ["Guest"] as RolesTitle[];
 
     const roleIds = rolesIdFromDB.map((role: { roleId: string; }) => role.roleId);
     const rolesFromDB = await dbConnection.select().from(roles).where(inArray(roles.id, roleIds));

@@ -24,6 +24,8 @@ export default async function ProtectedLayout({ children}: { children: React.Rea
     redirect('/login')
   }
 
+  //t
+
   return (
     <>
     <SidebarProvider>
