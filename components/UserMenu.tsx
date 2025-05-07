@@ -19,6 +19,8 @@ export function UserMenu() {
   const { data: session } = useSession();
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
+  const isAdministrator = session?.user?.roles?.includes("Administrator") || false;
+
   if (!session?.user) return null;
 
   return (
@@ -54,12 +56,24 @@ export function UserMenu() {
             </div>
           </div>
           <DropdownMenuSeparator />
+          {
+            isAdministrator && (
+              <DropdownMenuItem asChild>
+                <Link href="/admin" className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  Admin Dashboard
+                </Link>
+              </DropdownMenuItem>
+            )
+          }
+
           <DropdownMenuItem asChild>
             <Link href="/account" className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               My Account
             </Link>
           </DropdownMenuItem>
+
           <DropdownMenuItem asChild>
             <Link href="/bookings" className="cursor-pointer">
               <CalendarDays className="mr-2 h-4 w-4" />
@@ -72,6 +86,7 @@ export function UserMenu() {
               Settings
             </Link>
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={() => setIsSignOutModalOpen(true)}

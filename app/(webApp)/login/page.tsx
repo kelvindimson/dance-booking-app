@@ -6,6 +6,11 @@ const LoginPage = async () => {
   const session = await auth();
 
   // Redirect to home if already logged in
+if (session?.user?.roles?.includes("Administrator")) {
+    redirect('/admin');
+}
+
+
   if (session) {
     redirect('/');
   }

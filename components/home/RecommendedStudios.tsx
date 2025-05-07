@@ -21,7 +21,7 @@ const recommendedStudios = [
     rating: 5.0,
     reviews: 1773,
     type: "Dance Studio",
-    image: "/dance-flow-0001-example-002.jpg"
+    image: "/dance-flow-example-002.jpg"
   },
   {
     id: 3,

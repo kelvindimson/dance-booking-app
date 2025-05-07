@@ -47,9 +47,9 @@ export function NewStudios() {
   return (
     <div className="my-12">
       <h2 className="text-2xl font-bold mb-6">New to Dance Flow</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {newStudios.map((studio) => (
-          <Card key={studio.id} className="overflow-hidden">
+          <Card key={studio.id} className="overflow-hidden py-0">
             <div className="aspect-[4/3] relative">
               <Image
                 src={studio.image}
