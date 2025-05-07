@@ -42,6 +42,7 @@ declare module "next-auth" {
     createdAt?: Date
     updatedAt?: Date | null
     deletedAt?: Date | null
+    roles?: string[] | null
   }
 
   interface UserLite {

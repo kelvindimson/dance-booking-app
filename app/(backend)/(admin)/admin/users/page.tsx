@@ -1,12 +1,11 @@
-import React from 'react'
+"use client";
 
-const AdminUserManagement = () => {
+import { UsersTable } from "@/components/users/users-table";
+
+export default function UsersPage() {
   return (
-    <div>
-      Admin User Management Page
-      <p>This is where you can manage users.</p>
+    <div className="p-6">
+      <UsersTable />
     </div>
-  )
+  );
 }
-
-export default AdminUserManagement

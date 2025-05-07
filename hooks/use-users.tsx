@@ -24,6 +24,7 @@ interface UpdateUserData {
   name?: string;
   status?: string;
   roleIds?: string[];
+  password?: string;
 }
 
 export const useUsers = () => {
