@@ -16,7 +16,7 @@ import {
   Medal,
   Music
 } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogHeader, } from "@/components/ui/dialog";
 import { BookingFlow } from "@/components/booking/BookingFlow";
 import { useState } from "react";
 
@@ -258,6 +258,9 @@ export default function ClassDetailsPage() {
 
     <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
         <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+            <DialogTitle className="sr-only">Book Dance Class</DialogTitle>
+          </DialogHeader>
           <BookingFlow 
             classDetails={{
               id: classDetails.id,

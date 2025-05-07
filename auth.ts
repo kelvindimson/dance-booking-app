@@ -47,22 +47,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     console.log("User data:", result.user);
                     return result.user;
               
-                //     // if (!result.user) {
-                //     //   throw new Error("User not found")
-                //     // }
-
-                //   // Proper Drizzle ORM query
-                //   const userFromDB = await dbConnection
-                //     .select()
-                //     .from(users)
-                //     .where(eq(users.email, email))
-                //     .limit(1)
-
-                //   if (!userFromDB[0]) {
-                //     throw new Error("User not found in database")
-                //   }
-
-                //   return userFromDB[0]
 
                 } catch (error) {
                     console.error("Auth error:", error)
