@@ -153,18 +153,18 @@ export async function GET(req: Request) {
 
         }
 
-        const userRolesList = await getUserRoles(session.user.id);
-        const allowedRolesArray: RolesTitle[] = ["Administrator"];
+        // const userRolesList = await getUserRoles(session.user.id);
+        // const allowedRolesArray: RolesTitle[] = ["Administrator"];
 
-        const isAllowed = userRolesList.some(role => allowedRolesArray.includes(role as RolesTitle));
+        // const isAllowed = userRolesList.some(role => allowedRolesArray.includes(role as RolesTitle));
     
-        if (!isAllowed) {
-            return NextResponse.json({
-                message: "Unauthorized access. Administrator role required.",
-                status: statusCodes.UNAUTHORIZED,
-                success: false
-            });
-        }
+        // if (!isAllowed) {
+        //     return NextResponse.json({
+        //         message: "Unauthorized access. Administrator role required.",
+        //         status: statusCodes.UNAUTHORIZED,
+        //         success: false
+        //     });
+        // }
 
         const rolesList = await dbConnection.select().from(roles).orderBy(asc(roles.name));
 

@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
-import { Navigation } from "@/components/Navbar";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,9 +32,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className="text-base">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
-          <Toaster   position="bottom-right" reverseOrder={false}/>
-          <Navigation />
-          {children}
+          <ReactQueryProvider>
+            <Toaster position="bottom-right" reverseOrder={false}/>
+
+            {children}
+          </ReactQueryProvider>
         </SessionProvider>
       </body>
     </html>
